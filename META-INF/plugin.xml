@@ -58,7 +58,7 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action id="test" class="ua.in.dej.myEmmet.myEmmet" text="test" description="test">
+        <action id="EmmetEverywhere" class="ua.in.dej.myEmmet.myEmmet" text="EmmetEverywhere" description="EmmetEverywhere">
             <add-to-group group-id="EditorActions" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt CLOSE_BRACKET"/>
         </action>
