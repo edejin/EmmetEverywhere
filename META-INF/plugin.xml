@@ -1,0 +1,75 @@
+<idea-plugin version="2">
+    <id>ua.in.dej.myEmmet</id>
+    <name>Emmet Everywhere</name>
+    <version>1.0</version>
+    <vendor email="efim@dejin.pp.ua">Efim Vl. Dejin</vendor>
+
+    <description><![CDATA[
+        EmmetEverywhere Plugin for IntelliJ IDEA
+        ==================================<br />
+<br />
+        Use HTML Emmet anywhere.<br />
+        For example in Google Closure Template (*.soy files).<br />
+        Just type your code and press CTRL+ALT+]<br />
+<br />
+        Here’s an example: this abbreviation<br />
+<br />
+        #page>div.logo+ul#navigation>li*5>a{Item $}<br />
+<br />
+        ...can be transformed into<br />
+<br />
+        &lt;div id="page"&gt;<br />
+            &lt;div class="logo"&gt;&lt;/div&gt;<br />
+            &lt;ul id="navigation"&gt;<br />
+                &lt;li&gt;&lt;a href=""&gt;Item 1&lt;/a&gt;&lt;/li&gt;<br />
+                &lt;li&gt;&lt;a href=""&gt;Item 2&lt;/a&gt;&lt;/li&gt;<br />
+                &lt;li&gt;&lt;a href=""&gt;Item 3&lt;/a&gt;&lt;/li&gt;<br />
+                &lt;li&gt;&lt;a href=""&gt;Item 4&lt;/a&gt;&lt;/li&gt;<br />
+                &lt;li&gt;&lt;a href=""&gt;Item 5&lt;/a&gt;&lt;/li&gt;<br />
+            &lt;/ul&gt;<br />
+        &lt;/div&gt;<br />
+<br />
+        more information about Emmet:<br />
+        http://emmet.io/<br />
+
+      ]]></description>
+
+    <change-notes><![CDATA[
+            ]]>
+    </change-notes>
+
+    <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="107.105"/>
+
+    <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
+
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="test" class="ua.in.dej.myEmmet.myEmmet" text="test" description="test">
+            <add-to-group group-id="EditorActions" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt CLOSE_BRACKET"/>
+        </action>
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+    <!--<module-components>-->
+        <!--<component>-->
+            <!--<implementation-class>com.lexand.enclosing.EnclosingMod</implementation-class>-->
+        <!--</component>-->
+    <!--</module-components>-->
+</idea-plugin>

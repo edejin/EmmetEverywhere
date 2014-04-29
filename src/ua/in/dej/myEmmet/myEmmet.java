@@ -1,0 +1,183 @@
+package ua.in.dej.myEmmet;
+
+//import com.intellij.ide.impl.DataManagerImpl;
+
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.editor.CaretModel;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
+import com.intellij.openapi.project.Project;
+//import com.intellij.openapi.ui.Messages;
+import sun.org.mozilla.javascript.internal.NativeObject;
+
+import javax.script.*;
+import java.io.*;
+
+/**
+ * Created by fima on 28.04.14.
+ */
+public class myEmmet extends AnAction {
+
+    public myEmmet() {
+        // Set the menu item name.
+//        super("Text _Boxes");
+        // Set the menu item name, description and icon.
+        // super("Text _Boxes","Item description",IconLoader.getIcon("/Mypackage/icon.png"));
+    }
+
+    private static String getStringFromInputStream(InputStream is) {
+
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+
+        String line;
+        try {
+
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return sb.toString();
+
+    }
+
+    public void actionPerformed(AnActionEvent event) {
+//        DataManagerImpl my = (DataManagerImpl) e.getDataContext();
+        final Project project = event.getProject();
+        FileEditor fileEditor = event.getData(PlatformDataKeys.FILE_EDITOR);
+        Editor editor = ((PsiAwareTextEditorImpl) fileEditor).getEditor();
+        Document document = editor.getDocument();
+
+        if (document.isWritable()) {
+
+            String fullText = document.getText();
+
+            CaretModel caretModel = editor.getCaretModel();
+
+            Integer caretPosition = caretModel.getOffset();
+            Integer lineStart = caretModel.getVisualLineStart();
+
+            String leftValue = fullText.substring(lineStart, caretPosition);
+
+            Boolean rightGood = false;
+
+            if (fullText.length() == caretModel.getOffset()) {
+                rightGood = true;
+            } else {
+                rightGood = fullText.substring(caretPosition, caretPosition + 1).matches("\\s");
+            }
+
+            if (caretModel.getOffset() == 0) {
+                rightGood = false;
+            } else {
+                rightGood = rightGood && (fullText.substring(caretPosition - 1, caretPosition).matches("\\S"));
+            }
+            NativeObject outputData = null;
+
+            if (rightGood) {
+                String valueForEmmet = "";
+
+                Integer i = caretPosition;
+
+                for (; i > lineStart && fullText.substring(i-1, i ).matches("\\S"); i--) {
+                    valueForEmmet = fullText.substring(i-1, i ) + valueForEmmet;
+                }
+
+                ScriptEngineManager factory = new ScriptEngineManager();
+                ScriptEngine engine = factory.getEngineByName("JavaScript");
+                String theString = "";
+                Object tmp;
+
+                try {
+//                    engine.eval("var gg = function(a){ return ('Hello, World! from '+a)}");
+
+                    theString = getStringFromInputStream(this.getClass().getResourceAsStream("/emmet.js"));
+
+                    engine.eval(theString);
+                    Invocable inv = (Invocable) engine;
+                    tmp = inv.invokeFunction("job", valueForEmmet, caretPosition);
+                    if (tmp instanceof NativeObject) {
+                        outputData = (NativeObject) tmp;
+                    } else {
+                        throw new Exception("tmp is type: " + tmp.getClass().getName());
+                    }
+                } catch (Throwable e) {
+
+                }
+//                System.out.print(resultText);
+                // todo
+//                document.replaceString(i,caretModel.getOffset(),(String) outputData.get("text"));
+//
+//                com.intellij.openapi.application.Application.runWriteAction
+//
+                final SelectionModel selectionModel = editor.getSelectionModel();
+
+                final Document documentF = document;
+                final Integer iF = i;
+                final Integer caretOffsetF = caretModel.getOffset();
+                final String resultStringF = (String) outputData.get("text");
+
+                final Integer startSelection = ((Double) outputData.get("selectStart")).intValue();
+                final Integer stopSelection = ((Double) outputData.get("selectStop")).intValue();
+
+                final CaretModel caretModelF = caretModel;
+
+
+                final Runnable readRunner = new Runnable() {
+                    @Override
+                    public void run() {
+//                document.setText(contents);
+                        documentF.replaceString(iF, caretOffsetF, resultStringF);
+
+                        selectionModel.setSelection(startSelection, stopSelection);
+
+                        caretModelF.moveToOffset(stopSelection);
+                    }
+                };
+                ApplicationManager.getApplication().invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+                            @Override
+                            public void run() {
+                                ApplicationManager.getApplication().runWriteAction(readRunner);
+                            }
+                        }, "DiskRead", null);
+                    }
+                });
+
+            }
+
+        } else {
+
+        }
+
+//        Project project = event.getData(PlatformDataKeys.PROJECT);
+//        String txt= Messages.showInputDialog(project, "What is your name?", "Input your name", Messages.getQuestionIcon());
+//        Messages.showMessageDialog(project, "Hello, " + txt + "!\n I am glad to see you.", "Information", Messages.getInformationIcon());
+
+    }
+
+}
+
