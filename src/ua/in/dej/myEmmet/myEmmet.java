@@ -100,8 +100,28 @@ public class myEmmet extends AnAction {
 
                 Integer i = caretPosition;
 
-                for (; i > lineStart && fullText.substring(i-1, i ).matches("\\S"); i--) {
-                    valueForEmmet = fullText.substring(i-1, i ) + valueForEmmet;
+                Boolean inBrace = false;
+                Boolean inSquare = false;
+
+                for (; i > lineStart &&
+                        ((inBrace || inSquare)
+                                || (!inBrace && !inSquare && fullText.substring(i - 1, i).matches("\\S")))
+                        ; i--) {
+
+                    if (!inBrace && fullText.substring(i - 1, i).equals("}")) {
+                        inBrace = true;
+                    }
+                    if (inBrace && fullText.substring(i - 1, i).equals("{")) {
+                        inBrace = false;
+                    }
+                    if (!inSquare && fullText.substring(i - 1, i).equals("]")) {
+                        inSquare = true;
+                    }
+                    if (inSquare && fullText.substring(i - 1, i).equals("[")) {
+                        inSquare = false;
+                    }
+
+                    valueForEmmet = fullText.substring(i - 1, i) + valueForEmmet;
                 }
 
                 ScriptEngineManager factory = new ScriptEngineManager();
@@ -126,7 +146,6 @@ public class myEmmet extends AnAction {
 
                 }
 //                System.out.print(resultText);
-                // todo
 //                document.replaceString(i,caretModel.getOffset(),(String) outputData.get("text"));
 //
 //                com.intellij.openapi.application.Application.runWriteAction

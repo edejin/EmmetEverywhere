@@ -14103,9 +14103,6 @@ var gg = function(value, start, end, noIndent) {    // (content, caretPos - abbr
  */
 // var arguments = process.argv.slice(2);
 
-//var abbr = arguments[0]; // todo
-//var caretPos = parseInt(arguments[1], 10); // todo
-
 job = function(text, position) {
   var content = emmet.expandAbbreviation(text, 'html', 'html');  // (abbr, syntax, profile, contextNode)
   return gg(content, position - text.length, position);
