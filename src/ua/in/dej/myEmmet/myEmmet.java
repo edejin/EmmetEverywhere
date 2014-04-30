@@ -108,13 +108,13 @@ public class myEmmet extends AnAction {
                                 || (!inBrace && !inSquare && fullText.substring(i - 1, i).matches("\\S")))
                         ; i--) {
 
-                    if (!inBrace && fullText.substring(i - 1, i).equals("}")) {
+                    if (!inSquare && !inBrace && fullText.substring(i - 1, i).equals("}")) {
                         inBrace = true;
                     }
                     if (inBrace && fullText.substring(i - 1, i).equals("{")) {
                         inBrace = false;
                     }
-                    if (!inSquare && fullText.substring(i - 1, i).equals("]")) {
+                    if (!inSquare && !inBrace && fullText.substring(i - 1, i).equals("]")) {
                         inSquare = true;
                     }
                     if (inSquare && fullText.substring(i - 1, i).equals("[")) {
