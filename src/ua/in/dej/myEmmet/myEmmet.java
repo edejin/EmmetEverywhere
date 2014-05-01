@@ -32,6 +32,17 @@ public class myEmmet extends AnAction {
 //        super("Text _Boxes");
         // Set the menu item name, description and icon.
         // super("Text _Boxes","Item description",IconLoader.getIcon("/Mypackage/icon.png"));
+
+        try {
+            ScriptEngineManager factory = new ScriptEngineManager();
+            ScriptEngine engine = factory.getEngineByName("JavaScript");
+            String theString = "";
+            theString = getStringFromInputStream(this.getClass().getResourceAsStream("/emmet.js"));
+            engine.eval(theString);
+            myInv = (Invocable) engine;
+        } catch (Throwable e) {
+
+        }
     }
 
     private static String getStringFromInputStream(InputStream is) {
@@ -118,17 +129,10 @@ public class myEmmet extends AnAction {
                     valueForEmmet = fullText.substring(i - 1, i) + valueForEmmet;
                 }
 
-                ScriptEngineManager factory = new ScriptEngineManager();
-                ScriptEngine engine = factory.getEngineByName("JavaScript");
-                String theString = "";
                 Object tmp;
 
                 try {
-                    theString = getStringFromInputStream(this.getClass().getResourceAsStream("/emmet.js"));
-
-                    engine.eval(theString);
-                    Invocable inv = (Invocable) engine;
-                    tmp = inv.invokeFunction("job", valueForEmmet, caretPosition);
+                    tmp = myInv.invokeFunction("job", valueForEmmet, caretPosition);
                     if (tmp instanceof NativeObject) {
                         outputData = (NativeObject) tmp;
                     } else {
