@@ -25,6 +25,8 @@ import java.io.*;
  */
 public class myEmmet extends AnAction {
 
+    private static Invocable myInv = null;
+
     public myEmmet() {
         // Set the menu item name.
 //        super("Text _Boxes");
@@ -70,16 +72,11 @@ public class myEmmet extends AnAction {
         Document document = editor.getDocument();
 
         if (document.isWritable()) {
-
             String fullText = document.getText();
-
             CaretModel caretModel = editor.getCaretModel();
-
             Integer caretPosition = caretModel.getOffset();
             Integer lineStart = caretModel.getVisualLineStart();
-
             String leftValue = fullText.substring(lineStart, caretPosition);
-
             Boolean rightGood = false;
 
             if (fullText.length() == caretModel.getOffset()) {
@@ -97,9 +94,7 @@ public class myEmmet extends AnAction {
 
             if (rightGood) {
                 String valueForEmmet = "";
-
                 Integer i = caretPosition;
-
                 Boolean inBrace = false;
                 Boolean inSquare = false;
 
@@ -120,7 +115,6 @@ public class myEmmet extends AnAction {
                     if (inSquare && fullText.substring(i - 1, i).equals("[")) {
                         inSquare = false;
                     }
-
                     valueForEmmet = fullText.substring(i - 1, i) + valueForEmmet;
                 }
 
@@ -130,8 +124,6 @@ public class myEmmet extends AnAction {
                 Object tmp;
 
                 try {
-//                    engine.eval("var gg = function(a){ return ('Hello, World! from '+a)}");
-
                     theString = getStringFromInputStream(this.getClass().getResourceAsStream("/emmet.js"));
 
                     engine.eval(theString);
@@ -146,57 +138,42 @@ public class myEmmet extends AnAction {
 
                 }
 //                System.out.print(resultText);
-//                document.replaceString(i,caretModel.getOffset(),(String) outputData.get("text"));
-//
-//                com.intellij.openapi.application.Application.runWriteAction
-//
-                final SelectionModel selectionModel = editor.getSelectionModel();
+                try {
+                    final SelectionModel selectionModel = editor.getSelectionModel();
+                    final Document documentF = document;
+                    final Integer iF = i;
+                    final Integer caretOffsetF = caretModel.getOffset();
+                    final String resultStringF = (String) outputData.get("text");
+                    final Integer startSelection = ((Double) outputData.get("selectStart")).intValue();
+                    final Integer stopSelection = ((Double) outputData.get("selectStop")).intValue();
+                    final CaretModel caretModelF = caretModel;
+                    final Runnable readRunner = new Runnable() {
+                        @Override
+                        public void run() {
+                            documentF.replaceString(iF, caretOffsetF, resultStringF);
+                            selectionModel.setSelection(startSelection, stopSelection);
+                            caretModelF.moveToOffset(stopSelection);
+                        }
+                    };
+                    ApplicationManager.getApplication().invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+                                @Override
+                                public void run() {
+                                    ApplicationManager.getApplication().runWriteAction(readRunner);
+                                }
+                            }, "DiskRead", null);
+                        }
+                    });
+                } catch (Throwable e) {
 
-                final Document documentF = document;
-                final Integer iF = i;
-                final Integer caretOffsetF = caretModel.getOffset();
-                final String resultStringF = (String) outputData.get("text");
-
-                final Integer startSelection = ((Double) outputData.get("selectStart")).intValue();
-                final Integer stopSelection = ((Double) outputData.get("selectStop")).intValue();
-
-                final CaretModel caretModelF = caretModel;
-
-
-                final Runnable readRunner = new Runnable() {
-                    @Override
-                    public void run() {
-//                document.setText(contents);
-                        documentF.replaceString(iF, caretOffsetF, resultStringF);
-
-                        selectionModel.setSelection(startSelection, stopSelection);
-
-                        caretModelF.moveToOffset(stopSelection);
-                    }
-                };
-                ApplicationManager.getApplication().invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-                            @Override
-                            public void run() {
-                                ApplicationManager.getApplication().runWriteAction(readRunner);
-                            }
-                        }, "DiskRead", null);
-                    }
-                });
-
+                }
             }
-
-        } else {
-
         }
-
 //        Project project = event.getData(PlatformDataKeys.PROJECT);
 //        String txt= Messages.showInputDialog(project, "What is your name?", "Input your name", Messages.getQuestionIcon());
 //        Messages.showMessageDialog(project, "Hello, " + txt + "!\n I am glad to see you.", "Information", Messages.getInformationIcon());
-
     }
-
 }
 
