@@ -1,11 +1,11 @@
-<idea-plugin version="2">
+<idea-plugin url="http://dej.in.ua/emmet-everywhere/" version="2">
     <id>ua.in.dej.myEmmet</id>
     <name>Emmet Everywhere</name>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <vendor url="http://dej.in.ua/emmet-everywhere/" email="efim@dejin.pp.ua">Efim Vl. Dejin</vendor>
 
     <description><![CDATA[
-        EmmetEverywhere Plugin for IntelliJ IDEA
+        EmmetEverywhere Plugin for IntelliJ IDEA<br />
         ==================================<br />
 <br />
         Use HTML Emmet anywhere.<br />
@@ -46,7 +46,7 @@
     <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
     -->
-    <depends>com.intellij.modules.platform</depends>
+    <!--<depends>com.intellij.modules.platform</depends>-->
 
     <application-components>
         <!-- Add your application components here -->
