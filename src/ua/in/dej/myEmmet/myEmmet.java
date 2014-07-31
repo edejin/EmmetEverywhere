@@ -14,7 +14,6 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.project.Project;
-//import com.intellij.openapi.ui.Messages;
 import sun.org.mozilla.javascript.internal.NativeObject;
 
 import javax.script.*;
@@ -28,20 +27,15 @@ public class myEmmet extends AnAction {
     private static Invocable myInv = null;
 
     public myEmmet() {
-        // Set the menu item name.
-//        super("Text _Boxes");
-        // Set the menu item name, description and icon.
-        // super("Text _Boxes","Item description",IconLoader.getIcon("/Mypackage/icon.png"));
-
         try {
             ScriptEngineManager factory = new ScriptEngineManager();
-            ScriptEngine engine = factory.getEngineByName("JavaScript");
+            ScriptEngine engine = factory.getEngineByMimeType("application/javascript");
             String theString = "";
             theString = getStringFromInputStream(this.getClass().getResourceAsStream("/emmet.js"));
             engine.eval(theString);
             myInv = (Invocable) engine;
         } catch (Throwable e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -76,7 +70,6 @@ public class myEmmet extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent event) {
-//        DataManagerImpl my = (DataManagerImpl) e.getDataContext();
         final Project project = event.getProject();
         FileEditor fileEditor = event.getData(PlatformDataKeys.FILE_EDITOR);
         Editor editor = ((PsiAwareTextEditorImpl) fileEditor).getEditor();
@@ -139,7 +132,7 @@ public class myEmmet extends AnAction {
                         throw new Exception("tmp is type: " + tmp.getClass().getName());
                     }
                 } catch (Throwable e) {
-
+                    e.printStackTrace();
                 }
 //                System.out.print(resultText);
                 try {
@@ -147,9 +140,9 @@ public class myEmmet extends AnAction {
                     final Document documentF = document;
                     final Integer iF = i;
                     final Integer caretOffsetF = caretModel.getOffset();
-                    final String resultStringF = (String) outputData.get("text");
-                    final Integer startSelection = ((Double) outputData.get("selectStart")).intValue();
-                    final Integer stopSelection = ((Double) outputData.get("selectStop")).intValue();
+                    final String resultStringF = (String) outputData.get("text", null);
+                    final Integer startSelection = ((Double) outputData.get("selectStart", null)).intValue();
+                    final Integer stopSelection = ((Double) outputData.get("selectStop", null)).intValue();
                     final CaretModel caretModelF = caretModel;
                     final Runnable readRunner = new Runnable() {
                         @Override
@@ -171,13 +164,10 @@ public class myEmmet extends AnAction {
                         }
                     });
                 } catch (Throwable e) {
-
+                    e.printStackTrace();
                 }
             }
         }
-//        Project project = event.getData(PlatformDataKeys.PROJECT);
-//        String txt= Messages.showInputDialog(project, "What is your name?", "Input your name", Messages.getQuestionIcon());
-//        Messages.showMessageDialog(project, "Hello, " + txt + "!\n I am glad to see you.", "Information", Messages.getInformationIcon());
     }
 }
 
