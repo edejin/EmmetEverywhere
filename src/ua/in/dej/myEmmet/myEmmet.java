@@ -14,7 +14,8 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.project.Project;
-import sun.org.mozilla.javascript.internal.NativeObject;
+//import sun.org.mozilla.javascript.internal.NativeObject; // 1.7
+import jdk.nashorn.api.scripting.ScriptObjectMirror; // 1.8
 
 import javax.script.*;
 import java.io.*;
@@ -27,9 +28,13 @@ public class myEmmet extends AnAction {
     private static Invocable myInv = null;
 
     public myEmmet() {
+        ScriptEngineManager factory = new ScriptEngineManager();
+        ScriptEngine engine = factory.getEngineByMimeType("application/javascript");
+        if (engine == null) {
+            factory = new ScriptEngineManager(null);
+            engine = factory.getEngineByMimeType("application/javascript");
+        }
         try {
-            ScriptEngineManager factory = new ScriptEngineManager();
-            ScriptEngine engine = factory.getEngineByMimeType("application/javascript");
             String theString = "";
             theString = getStringFromInputStream(this.getClass().getResourceAsStream("/emmet.js"));
             engine.eval(theString);
@@ -94,7 +99,8 @@ public class myEmmet extends AnAction {
             } else {
                 rightGood = rightGood && (fullText.substring(caretPosition - 1, caretPosition).matches("\\S"));
             }
-            NativeObject outputData = null;
+//            NativeObject outputData = null; // 1.7
+            ScriptObjectMirror outputData = null; // 1.8
 
             if (rightGood) {
                 String valueForEmmet = "";
@@ -122,12 +128,20 @@ public class myEmmet extends AnAction {
                     valueForEmmet = fullText.substring(i - 1, i) + valueForEmmet;
                 }
 
-                Object tmp;
+                Object tmp = null;
 
                 try {
+                    // 1.7
                     tmp = myInv.invokeFunction("job", valueForEmmet, caretPosition);
-                    if (tmp instanceof NativeObject) {
-                        outputData = (NativeObject) tmp;
+//                    if (tmp instanceof NativeObject) {
+//                        outputData = (NativeObject) tmp;
+//                    } else {
+//                        throw new Exception("tmp is type: " + tmp.getClass().getName());
+//                    }
+                    // 1.8
+                    // todo
+                    if (tmp instanceof ScriptObjectMirror) {
+                        outputData = (ScriptObjectMirror) tmp;
                     } else {
                         throw new Exception("tmp is type: " + tmp.getClass().getName());
                     }
@@ -140,9 +154,15 @@ public class myEmmet extends AnAction {
                     final Document documentF = document;
                     final Integer iF = i;
                     final Integer caretOffsetF = caretModel.getOffset();
-                    final String resultStringF = (String) outputData.get("text", null);
-                    final Integer startSelection = ((Double) outputData.get("selectStart", null)).intValue();
-                    final Integer stopSelection = ((Double) outputData.get("selectStop", null)).intValue();
+                    // 1.7
+//                    final String resultStringF = (String) outputData.get("text", null);
+//                    final Integer startSelection = ((Double) outputData.get("selectStart", null)).intValue();
+//                    final Integer stopSelection = ((Double) outputData.get("selectStop", null)).intValue();
+                    // 1.8
+                    final String resultStringF = (String) outputData.getMember("text");
+                    final Integer startSelection = ((Double) outputData.getMember("selectStart")).intValue();
+                    final Integer stopSelection = ((Double) outputData.getMember("selectStop")).intValue();
+                    // end if :)
                     final CaretModel caretModelF = caretModel;
                     final Runnable readRunner = new Runnable() {
                         @Override

@@ -1,6 +1,10 @@
 EmmetEverywhere Plugin for IntelliJ IDEA
 ==================================
 
+WARNING!
+v.1.2.3 for JAVA 1.8
+v.1.2.2 for JAVA 1.7
+
 Use HTML Emmet anywhere.
 For example in Google Closure Template (*.soy files).
 Just type your code and press CTRL+ALT+]
