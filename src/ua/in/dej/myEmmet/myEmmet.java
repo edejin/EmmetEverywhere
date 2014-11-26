@@ -41,7 +41,7 @@ public class myEmmet extends AnAction {
             engine.eval(theString);
             myInv = (Invocable) engine;
         } catch (Throwable e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -76,7 +76,6 @@ public class myEmmet extends AnAction {
     }
 
     public void actionPerformed(AnActionEvent event) {
-//        DataManagerImpl my = (DataManagerImpl) e.getDataContext();
         final Project project = event.getProject();
         FileEditor fileEditor = event.getData(PlatformDataKeys.FILE_EDITOR);
         Editor editor = ((PsiAwareTextEditorImpl) fileEditor).getEditor();
