@@ -1,12 +1,16 @@
 <idea-plugin url="http://dej.in.ua/emmet-everywhere/" version="2">
     <id>ua.in.dej.myEmmet</id>
     <name>Emmet Everywhere</name>
-    <version>1.2.2</version>
-    <vendor url="http://dej.in.ua/emmet-everywhere/" email="efim@dejin.pp.ua">Efim Vl. Dejin</vendor>
+    <version>1.2.3</version>
+    <vendor url="http://dej.in.ua/emmet-everywhere/" email="efim@dej.in.ua">Efim Vl. Dejin</vendor>
 
     <description><![CDATA[
         EmmetEverywhere Plugin for IntelliJ IDEA<br />
         ==================================<br />
+        <br />
+        WARNING!<br />
+        v.1.2.3 for JAVA 1.8<br />
+        v.1.2.2 for JAVA 1.7<br />
 <br />
         Use HTML Emmet anywhere.<br />
         For example in Google Closure Template (*.soy files).<br />
@@ -46,7 +50,7 @@
     <!-- uncomment to enable plugin in all products
     <depends>com.intellij.modules.lang</depends>
     -->
-    <!--<depends>com.intellij.modules.platform</depends>-->
+    <depends>com.intellij.modules.platform</depends>
 
     <application-components>
         <!-- Add your application components here -->

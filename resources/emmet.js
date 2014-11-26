@@ -14105,7 +14105,8 @@ var gg = function(value, start, end, noIndent) {    // (content, caretPos - abbr
 
 job = function(text, position) {
   var content = emmet.expandAbbreviation(text, 'html', 'html');  // (abbr, syntax, profile, contextNode)
-  return gg(content, position - text.length, position);
+  var result = gg(content, position - text.length, position);
+  return result.text + "\",\"selectStart\":" + result.selectStart + ",\"selectStop\":" + result.selectStop;
 };
 
 
