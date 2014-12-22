@@ -2,6 +2,11 @@ package ua.in.dej.myEmmet;
 
 //import com.intellij.ide.impl.DataManagerImpl;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -27,22 +32,40 @@ import java.util.regex.Pattern;
 public class myEmmet extends AnAction {
 
     private static Invocable myInv = null;
+    private static Boolean Once = false;
 
     public myEmmet() {
-        ScriptEngineManager factory = new ScriptEngineManager();
-        ScriptEngine engine = factory.getEngineByName("JavaScript");
-        if (engine == null) {
-            factory = new ScriptEngineManager(null);
-            engine = factory.getEngineByName("JavaScript");
-        }
-        try {
-            String theString = "";
-            theString = getStringFromInputStream(this.getClass().getResourceAsStream("/emmet.js"));
-            engine.eval(theString);
-            myInv = (Invocable) engine;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+
+        Notify();
+
+        ScriptEngineManager factory = null;
+        ScriptEngine engine = null;
+//        if (System.getProperty("java.version").indexOf("1.8") == 0) {
+            try {
+                factory = new ScriptEngineManager();
+                engine = factory.getEngineByMimeType("application/javascript");
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            try {
+                if (engine == null) {
+                    factory = new ScriptEngineManager(null);
+                    engine = factory.getEngineByMimeType("application/javascript");
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            try {
+                String theString = "";
+                theString = getStringFromInputStream(this.getClass().getResourceAsStream("/emmet.js"));
+                engine.eval(theString);
+                myInv = (Invocable) engine;
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+//        } else {
+//            badJavaVersion();
+//        }
     }
 
     private static String getStringFromInputStream(InputStream is) {
@@ -73,6 +96,20 @@ public class myEmmet extends AnAction {
 
         return sb.toString();
 
+    }
+
+    public void Notify() {
+        if (!Once) {
+            Once = true;
+            Notifications.Bus.notify(new Notification("EmmetEverywhere",
+                    "EmmetEverywhere plugin updated to v1.2.4",
+                    "If you find any bug send your OS and IDEA type and version, Java version and EmmetEverywhere version.<br />" +
+                            "Don't forget about stacktrace!<br />" +
+                            "<a href=\"mailto:efim@dej.in.ua\">efim@dej.in.ua</a><br />" +
+                            "If you find my plugin helpful, donate me using <b><a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=C5VR7Y8A5EXBU\">PayPal</a></b>",
+                    NotificationType.INFORMATION,
+                    NotificationListener.URL_OPENING_LISTENER));
+        }
     }
 
     public void actionPerformed(AnActionEvent event) {
@@ -143,7 +180,7 @@ public class myEmmet extends AnAction {
 //                    }
                     // 1.8
                     Matcher matcher = Pattern.compile("^((.|\\s)*)\\\",\\\"selectStart\\\":(.*),\\\"selectStop\\\":(.*)$", Pattern.MULTILINE).matcher((String) tmp);
-                    while(matcher.find()){
+                    while (matcher.find()) {
                         value = (String) matcher.group(1);
                         selectStart = Integer.parseInt(matcher.group(3));
                         selectStop = Integer.parseInt(matcher.group(4));
