@@ -36,7 +36,7 @@ public class myEmmet extends AnAction {
 
     public myEmmet() {
 
-        Notify();
+//        Notify();
 
         ScriptEngineManager factory = null;
         ScriptEngine engine = null;

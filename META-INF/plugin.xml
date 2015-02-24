@@ -1,7 +1,7 @@
 <idea-plugin url="http://dej.in.ua/emmet-everywhere/" version="2">
     <id>ua.in.dej.myEmmet</id>
     <name>Emmet Everywhere</name>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <vendor url="http://dej.in.ua/emmet-everywhere/" email="efim@dej.in.ua">Efim Vl. Dejin</vendor>
 
     <description><![CDATA[
